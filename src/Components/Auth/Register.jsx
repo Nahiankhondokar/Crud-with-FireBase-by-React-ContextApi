@@ -1,22 +1,28 @@
-import React, { Component } from 'react';
+import React, { useContext } from 'react';
 import { Alert, Button, CloseButton } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import './auth.css';
+import { StudentContext } from '../../StudentContext/StudentContext';
 
-class Register extends Component {
-  render() {
-    return (
-        <>
+const Register = () => {
+
+  const [ login, setLogin, register, seRregister, handleRegisterSubmit, alert, setAlert, handleAlertClose ] = useContext(StudentContext);
+
+
+  return (
+    <>
 
         <div className="mt-5 shadow"></div>
           <div className="login-block">
               <h1>User Registration</h1>
   
+              {
+                alert.status && <Alert className='d-flex justify-content-between' variant={ alert.type }>{ alert.msg }  <CloseButton onClick={ handleAlertClose }></CloseButton></Alert> 
+              }
   
-              <form style={{ paddingBottom : '10px' }}>
-                <input type="email" value='' placeholder="Email" id="username" />
+              <form onSubmit={ handleRegisterSubmit } style={{ paddingBottom : '10px' }}>
+                <input type="email" value={ register.email } onChange={ e => { seRregister({ ...register, email : e.target.value }) } } placeholder="Email" id="username" />
   
-                <input type="password" value='' placeholder="Password" id="password" />
+                <input type="password" value={ register.password } onChange={ e => { seRregister({ ...register, password : e.target.value }) } } placeholder="Password" id="password" />
   
                 <Button id='submit-btn' type='submit' className='btn-info'>Register</Button>
               </form>
@@ -25,9 +31,7 @@ class Register extends Component {
         </div>
         
         </>
-    )
-  }
+  )
 };
-
 
 export default Register;
