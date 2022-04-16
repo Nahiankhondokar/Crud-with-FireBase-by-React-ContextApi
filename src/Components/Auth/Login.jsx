@@ -6,15 +6,21 @@ import './auth.css';
 
 const Login = () => {
 
-  const [ login, setLogin, register, seRregister ] = useContext(StudentContext);
+  const [ login, setLogin, register, seRegister, handleRegisterSubmit, alert, setAlert, handleAlertClose, handleLoginSubmit ] = useContext(StudentContext);
+
 
   return (
     <>
       <div className="mt-5 shadow"></div>
         <div className="login-block">
             <h1>User Login</h1>
+
+            {
+              alert.status && <Alert className='d-flex justify-content-between' variant={ alert.type }>{ alert.msg }  <CloseButton onClick={ handleAlertClose }></CloseButton></Alert> 
+            }
+  
             
-            <form>
+            <form onSubmit={ handleLoginSubmit }> 
               <input type="text" value={ login.email } onChange={ e => { setLogin({ ...login, email : e.target.value }) } } placeholder="Email" id="username" />
 
               <input type="password" value={ login.password } onChange={ e => { setLogin({ ...login, password : e.target.value }) } } placeholder="Password" id="password" />

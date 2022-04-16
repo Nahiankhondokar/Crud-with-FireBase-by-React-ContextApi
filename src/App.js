@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { StudentContext } from './StudentContext/StudentContext';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import Register from './Components/Auth/Register';
 import StudentProfile from './Components/Student/StudentProfile';
 import Student from './Components/Student/Student';
 import Login from './Components/Auth/Login';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { StudentContext } from './StudentContext/StudentContext';
 import './App.css';
 import { app } from './firebase/firebase';
 
@@ -16,8 +16,23 @@ function App() {
   // get auth
   const auth = getAuth(app);
 
+  // Session Storage Auth
+  let data = JSON.parse(sessionStorage.getItem('auth'));
+
+  // Authentication checking
+  const [security, setSecurity] = useState(data ? data : false);
+  const AuthCheck = ({ children }) => {
+
+    return security ? children : <Navigate to='/' />;
+
+  }
+
+
+  // nabigate
+  const navigate = useNavigate();
+
   // registration Form
-  const [register, seRregister] = useState({
+  const [register, seRegister] = useState({
     email : '',
     password : ''
   });
@@ -28,7 +43,6 @@ function App() {
     type : '',
     status : false
   });
-
   const handleAlertClose = () => setAlert(false);
 
 
@@ -40,7 +54,7 @@ function App() {
 
 
 
-  // Registraiton user
+  // User Registraiton
   const handleRegisterSubmit = (e) => {
     e.preventDefault();
 
@@ -61,11 +75,72 @@ function App() {
         console.log(error);
       });
 
+      // input feilds empty
+      seRegister({
+        email : '',
+        password : ''
+      });
+
+      setAlert({
+        msg : "Data Added Successfully !",
+        type : 'success',
+        status : true
+      });
+
 
     }
 
   }
 
+
+
+  // User Login
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+
+    if( login.email === '' || login.password === '' ){
+      setAlert({
+        msg : "Empty Feilds !",
+        type : 'danger',
+        status : true
+      });
+    }else{
+
+      // data store
+      signInWithEmailAndPassword(auth, login.email, login.password)
+      .then(userCredential => {
+
+        sessionStorage.setItem('auth', JSON.stringify(true));
+        
+        setSecurity(true);
+        navigate('/all-student');
+
+      })
+      .catch(error =>{ 
+        setAlert({
+          msg : "Login Failed !",
+          type : 'danger',
+          status : true
+        });
+      });
+
+      // input feilds empty
+      setLogin({
+        email : '',
+        password : ''
+      });
+
+      
+
+    }
+  }
+
+
+  // User Lougout
+  const handleLogout = () => {
+    sessionStorage.removeItem('auth');
+    navigate('/');
+  }
 
 
 
@@ -74,20 +149,20 @@ function App() {
   return (
 
     
-    <StudentContext.Provider value={[ login, setLogin, register, seRregister, handleRegisterSubmit, alert, setAlert, handleAlertClose ]}>
+    <StudentContext.Provider value={[ login, setLogin, register, seRegister, handleRegisterSubmit, alert, setAlert, handleAlertClose, handleLoginSubmit, handleLogout ]}>
       
-    <BrowserRouter>
+   
       <Routes>
 
 
           <Route path='/' element={ <Login /> }></Route> 
           <Route path='/register' element={ <Register /> }></Route> 
           <Route path='/profile' element={ <StudentProfile /> }></Route> 
-          <Route path='/all-student' element={ <Student /> }></Route> 
-
+          <Route path='/all-student' element={ <AuthCheck> <Student /> </AuthCheck> }></Route> 
+          <Route path='*' element={ <Login /> }></Route> 
 
       </Routes>
-    </BrowserRouter>
+
 
    </StudentContext.Provider>
 

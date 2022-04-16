@@ -5,7 +5,7 @@ import { StudentContext } from '../../StudentContext/StudentContext';
 
 const Register = () => {
 
-  const [ login, setLogin, register, seRregister, handleRegisterSubmit, alert, setAlert, handleAlertClose ] = useContext(StudentContext);
+  const [ login, setLogin, register, seRegister, handleRegisterSubmit, alert, setAlert, handleAlertClose ] = useContext(StudentContext);
 
 
   return (
@@ -20,9 +20,9 @@ const Register = () => {
               }
   
               <form onSubmit={ handleRegisterSubmit } style={{ paddingBottom : '10px' }}>
-                <input type="email" value={ register.email } onChange={ e => { seRregister({ ...register, email : e.target.value }) } } placeholder="Email" id="username" />
+                <input type="email" value={ register.email } onChange={ e => { seRegister({ ...register, email : e.target.value }) } } placeholder="Email" id="username" />
   
-                <input type="password" value={ register.password } onChange={ e => { seRregister({ ...register, password : e.target.value }) } } placeholder="Password" id="password" />
+                <input type="password" value={ register.password } onChange={ e => { seRegister({ ...register, password : e.target.value }) } } placeholder="Password" id="password" />
   
                 <Button id='submit-btn' type='submit' className='btn-info'>Register</Button>
               </form>
